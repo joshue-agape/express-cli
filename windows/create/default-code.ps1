@@ -121,7 +121,6 @@ $controller_user_content_express_ts = @'
                 const users = await User.getAll();
                 success(res, 200, 'Users retrieved successfully', users);
             } catch (err: any) {
-                console.error('Erreur GET Users:', err.message);
                 error(res, 500, 'Erreur serveur', { details: err.message });
             }
         }
@@ -131,7 +130,6 @@ $controller_user_content_express_ts = @'
                 const newUser = await User.create(req.body);
                 success(res, 201, 'User created successfully', newUser);
             } catch (err: any) {
-                console.error('Erreur create User:', err.message);
                 error(res, 400, 'Bad Request', { details: err.message });
             }
         }
@@ -375,26 +373,31 @@ $jest_user_content_express_ts = @'
     import { sequelize } from '../database/models/index.ts';
 
     describe('User API Tests', () => {
+        beforeAll(async () => {
+            await sequelize.sync({ force: true });
+        });
+
         afterAll(async () => {
             await sequelize.close();
         });
 
-        describe('GET /api/v1/users', () => {
+        describe('GET /api/v1/user/find-all', () => {
             it('doit retourner la liste des utilisateurs (200)', async () => {
-                const response = await request(app).get('/api/v1/users');
+                const response = await request(app).get('/api/v1/user/find-all');
 
                 expect(response.statusCode).toBe(200);
-                expect(Array.isArray(response.body)).toBe(true);
+                expect(Array.isArray(response.body.data)).toBe(true);
 
-                if (response.body.length > 0) {
-                    expect(response.body[0]).toHaveProperty('id');
-                    expect(response.body[0]).toHaveProperty('name');
-                    expect(response.body[0]).toHaveProperty('email');
+                if (response.body.data.length > 0) {
+                    expect(response.body.data[0]).toHaveProperty('user_id');
+                    expect(response.body.data[0]).toHaveProperty('name');
+                    expect(response.body.data[0]).toHaveProperty('email');
+                    expect(response.body.data[0]).toHaveProperty('status');
                 }
             });
         });
 
-        describe('POST /api/v1/users', () => {
+        describe('POST /api/v1/user/create', () => {
             const uniqueEmail = `test${Date.now()}@example.com`;
 
             it('doit créer un utilisateur avec succès (201)', async () => {
@@ -404,13 +407,13 @@ $jest_user_content_express_ts = @'
                 };
 
                 const response = await request(app)
-                    .post('/api/v1/users')
+                    .post('/api/v1/user/create')
                     .send(newUser);
 
                 expect(response.statusCode).toBe(201);
-                expect(response.body).toHaveProperty('id');
-                expect(response.body.name).toBe(newUser.name);
-                expect(response.body.email).toBe(newUser.email);
+                expect(response.body.data).toHaveProperty('user_id');
+                expect(response.body.data.name).toBe(newUser.name);
+                expect(response.body.data.email).toBe(newUser.email);
             });
 
             it("doit échouer si l'email est déjà utilisé (400)", async () => {
@@ -420,11 +423,11 @@ $jest_user_content_express_ts = @'
                 };
 
                 const response = await request(app)
-                    .post('/api/v1/users')
+                    .post('/api/v1/user/create')
                     .send(duplicateUser);
 
                 expect(response.statusCode).toBe(400);
-                expect(response.body).toHaveProperty('error');
+                expect(response.body).toHaveProperty('errors');
             });
 
             it("doit échouer si le format de l'email est invalide (400)", async () => {
@@ -434,10 +437,11 @@ $jest_user_content_express_ts = @'
                 };
 
                 const response = await request(app)
-                    .post('/api/v1/users')
+                    .post('/api/v1/user/create')
                     .send(badUser);
 
                 expect(response.statusCode).toBe(400);
+                expect(response.body).toHaveProperty('errors');
             });
 
             it('doit échouer si des champs requis sont manquants (400)', async () => {
@@ -446,10 +450,11 @@ $jest_user_content_express_ts = @'
                 };
 
                 const response = await request(app)
-                    .post('/api/v1/users')
+                    .post('/api/v1/user/create')
                     .send(incompleteUser);
 
                 expect(response.statusCode).toBe(400);
+                expect(response.body).toHaveProperty('errors');
             });
         });
     });

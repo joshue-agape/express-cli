@@ -39,10 +39,12 @@ function New-ExpressApp {
     )
     foreach ($d in $dirs) { if (-not (Test-Path $d)) { New-Item -ItemType Directory -Path $d -Force | Out-Null } }
 
-    Write-Host "Installing dependencies (Production)"
+    Write-Host ""
+    Write-Host "`n--- Installing dependencies (Production) ---" -ForegroundColor Cyan
     npm install dotenv express merge-yaml swagger-ui-express yamljs cors express-session cookie-parser express-basic-auth node-cron
 
-    Write-Host "Installing dependencies for database support"
+    Write-Host ""
+    Write-Host "`n--- Installing dependencies for database support ---" -ForegroundColor Cyan
     switch ($db_choice) {
         "1" {
             npm install sequelize mysql2
@@ -75,7 +77,8 @@ function New-ExpressApp {
             Set-Content "configs/env.ts" -Value $env_sqlite_configs_content -Encoding UTF8
         }
         default {
-            Write-Host "Invalid choice. Using PostgreSQL by default."
+            Write-Host ""
+            Write-Host "`n--- Invalid choice. Using PostgreSQL by default. ---" -ForegroundColor Cyan
             npm install sequelize pg pg-hstore
             Set-Content ".env" -Value $env_postgres_content_express_ts -Encoding UTF8
             Set-Content ".env.example" -Value $env_postgres_content_express_ts -Encoding UTF8
@@ -83,7 +86,8 @@ function New-ExpressApp {
         }
     }
 
-    Write-Host "Installing dependencies (Development)"
+    Write-Host ""
+    Write-Host "`n--- Installing dependencies (Development) ---" -ForegroundColor Cyan
     npm install -D @types/express @types/jest @types/node @types/supertest @types/swagger-ui-express @types/yamljs copyfiles jest prettier rimraf supertest ts-jest ts-node-dev tsx typescript @types/cors @types/express-session @types/cookie-parser @types/validator @types/lodash sequelize-cli
 
     Set-Content "tsconfig.json" -Value $tsconfig_content_express_ts -Encoding UTF8
@@ -137,15 +141,19 @@ function New-ExpressApp {
     npm pkg set scripts.db:seed:fresh="npx sequelize-cli db:seed:undo"
     npm pkg set scripts.db:seed:fresh:all="npx sequelize-cli db:seed:undo:all"
     
-    Write-Host "Formatting project code..."
+    Write-Host ""
+    Write-Host "`n--- Formatting project code... ---" -ForegroundColor Cyan
     npm run format
     
+    Write-Host ""
     $GIT = Read-Host "Would you like to initialize Git? (Y/N)"
     if ($GIT.Trim() -match '^[Yy]') {
         git init
         git add -A
         git commit -m "Initial commit"
+        git branch -M main
     }
 
-    Write-Host "Project setup done! Happy coding"
+    Write-Host ""
+    Write-Host "`n--- Project setup done! Happy coding ---" -ForegroundColor Cyan
 }
