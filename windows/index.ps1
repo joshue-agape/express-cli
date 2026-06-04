@@ -1,0 +1,1 @@
+. "$PSScriptRoot\create\index.ps1"
