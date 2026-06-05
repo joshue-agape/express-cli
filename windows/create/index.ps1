@@ -104,7 +104,7 @@ function New-ExpressApp {
     Set-Content "docs/main.yaml" -Value $docs_main_yaml_content_express_ts -Encoding UTF8
     Set-Content "docs/users-api-docs/create.yaml" -Value $docs_create_user_yaml_content_express_ts -Encoding UTF8
     Set-Content "docs/users-api-docs/find-all.yaml" -Value $docs_find_all_users_yaml_content_express_ts -Encoding UTF8
-    Set-Content "app/controllers/user.controller.ts" -Value $controller_user_content_express_ts -Encoding UTF8
+    Set-Content "app/controllers/UserController.ts" -Value $controller_user_content_express_ts -Encoding UTF8
     Set-Content "app/repositories/BaseRepository.ts" -Value $repository_base_content_express_ts -Encoding UTF8
     Set-Content "app/repositories/UserRepository.ts" -Value $repository_user_content_express_ts -Encoding UTF8
     Set-Content "app/routes/v1/user.ts" -Value $routes_user_content_express_ts -Encoding UTF8

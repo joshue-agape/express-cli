@@ -303,7 +303,7 @@ $repository_user_content_express_ts = @'
 
 $routes_user_content_express_ts = @'
     import { Router } from 'express';
-    import { userController } from '../../controllers/user.controller.ts';
+    import { userController } from '../../controllers/UserController.ts';
 
     const router = Router();
 
