@@ -218,10 +218,9 @@ function install-auth-service-express {
 
         foreach ($key in $auth_vars.Keys) {
             if ($content -notmatch "(?m)^$key=") {
-                Add-Content -Path $file -Value "`n$key='$($auth_vars[$key])'"
+                Add-Content -Path $file -Value "$key='$($auth_vars[$key])'"
             }
         }
-        Add-Content -Path $file -Value "`n"
     }
 
     $filePath = "configs/env.ts"
@@ -242,8 +241,16 @@ function install-auth-service-express {
     Write-Host "`n--- Formatting project code... ---" -ForegroundColor Green
     npm run format
 
-    git add . | Out-Null
-    git commit -m "feat: add authentication service with JWT and bcrypt" | Out-Null
+    if (Test-Path ".git") {
+        Write-Host ""
+        $GIT = Read-Host "Would you like to add a new commit to Git? (y/N)"
+        
+        if ($null -ne $GIT -and $GIT.Trim() -match '^[Yy]') {
+            git add . | Out-Null
+            git commit -m "feat: add authentication service with JWT and bcrypt" | Out-Null
+            Write-Host "-> Changes committed to Git." -ForegroundColor Gray
+        }
+    }
 
     Write-Host "`n--- Auth Service installed successfully. ---" -ForegroundColor Green
 }

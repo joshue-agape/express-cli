@@ -46,6 +46,7 @@ DB_PASSWORD=database_password
 DB_HOST=localhost
 DB_PORT=3306
 DIALECT=mysql
+
 '@
 
 $env_mysql_configs_content = @'
@@ -84,6 +85,7 @@ DB_PASSWORD=database_password
 DB_HOST=localhost
 DB_PORT=5432
 DIALECT=postgres
+
 '@
 
 $env_postgresql_configs_content = @'
@@ -118,6 +120,7 @@ SWAGGER_PASSWORD=swagger_password
 
 DIALECT=sqlite
 DB_STORAGE=./src/database.sqlite
+
 '@
 
 $env_sqlite_configs_content = @'
@@ -152,6 +155,7 @@ DB_PASSWORD=database_password
 DB_HOST=localhost
 DB_PORT=1433
 DIALECT=mssql
+
 '@
 
 $env_sqlserver_configs_content = @'
@@ -192,6 +196,7 @@ SWAGGER_PASSWORD=swagger_password
 
 DB_URL=mongodb://localhost:27017/database_name
 DIALECT=mongodb
+
 '@
 
 $env_mongodb_configs_content = @'

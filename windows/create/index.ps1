@@ -90,6 +90,8 @@ function New-ExpressApp {
     Write-Host "`n--- Installing dependencies (Development) ---" -ForegroundColor Cyan
     npm install -D @types/express @types/jest @types/node @types/supertest @types/swagger-ui-express @types/yamljs copyfiles jest prettier rimraf supertest ts-jest ts-node-dev tsx typescript @types/cors @types/express-session @types/cookie-parser @types/validator @types/lodash sequelize-cli
 
+    npm audit fix
+    
     Set-Content "tsconfig.json" -Value $tsconfig_content_express_ts -Encoding UTF8
     Set-Content "main.ts" -Value $main_content_express_ts -Encoding UTF8
     Set-Content "jest.config.cjs" -Value $jest_config_content_express_ts -Encoding UTF8
