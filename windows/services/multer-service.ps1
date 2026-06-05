@@ -140,22 +140,24 @@ function install-multer-service-express {
     
     $routerFilePath = "app/routes/index.ts"
 
+    $routerFilePath = "app/routes/index.ts"
+
     if (Test-Path $routerFilePath) {
         $routerContent = Get-Content -Raw -Path $routerFilePath
 
         if ($routerContent -notmatch "v1UploadRoutes") {
             if ($routerContent -match "(?s)(.*^import\s+.*?;\s*\r?\n)(.*)") {
-                $routerContent = $matches[1] + "import v1UploadRoutes from './v1/upload.ts';`n" + $matches[2]
+                $routerContent = $matches[1] + "$import_service`r`n" + $matches[2]
             }
 
             if ($routerContent -match "(?s)(.*router\.use\(.*?\);?\s*\r?\n)(.*)") {
-                $routerContent = $matches[1] + "router.use('/v1/multer', v1UploadRoutes);`n" + $matches[2]
+                $routerContent = $matches[1] + "$use_service`r`n" + $matches[2]
             } else {
-                $routerContent = $routerContent -replace "(export\s+default)", "router.use('/v1/multer', v1UploadRoutes);`n`n`$1"
+                $routerContent = $routerContent -replace "(export\s+default)", "$use_service`r`n`r`n`$1"
             }
 
             Set-Content -Path $routerFilePath -Value $routerContent -NoNewline
-            Write-Host "-> Routes updated successfully (added at the end of imports and routes) in $routerFilePath" -ForegroundColor Gray
+            Write-Host "-> Routes updated perfectly (always at the very end of sections) in $routerFilePath" -ForegroundColor Gray
         } else {
             Write-Host "-> Upload routes already present in $routerFilePath" -ForegroundColor Yellow
         }
