@@ -135,27 +135,25 @@ function install-multer-service-express {
     Set-Content "app/services/UploadService.ts" -Value $multer_service_express_ts -Encoding UTF8
     Set-Content "app/routes/v1/upload.ts" -Value $routes_multer_express_ts -Encoding UTF8
 
-    $import_service = "import v1UploadRoutes from './v1/upload.ts';"
-    $use_service = "router.use('/v1/multer', v1UploadRoutes);"
-    
     $routerFilePath = "app/routes/index.ts"
 
     if (Test-Path $routerFilePath) {
         $routerContent = Get-Content -Raw -Path $routerFilePath
 
         if ($routerContent -notmatch "v1UploadRoutes") {
-            if ($routerContent -match "(?s)(.*^import\s+.*?;\s*\r?\n)(.*)") {
-                $routerContent = $matches[1] + "import v1UploadRoutes from './v1/upload.ts';`n" + $matches[2]
+            
+            if ($routerContent -match "(?s)(.*^import\s+[^`n]*\r?\n)(.*)") {
+                $routerContent = $matches[1] + "import v1UploadRoutes from './v1/upload.ts';`r`n" + $matches[2]
             }
 
-            if ($routerContent -match "(?s)(.*router\.use\(.*?\);?\s*\r?\n)(.*)") {
-                $routerContent = $matches[1] + "router.use('/v1/multer', v1UploadRoutes);`n" + $matches[2]
+            if ($routerContent -match "(?s)(.*)(\r?\nexport\s+default\s+router;?)") {
+                $routerContent = $matches[1] + "router.use('/v1/multer', v1UploadRoutes);`r`n`r`n" + $matches[2].TrimStart()
             } else {
-                $routerContent = $routerContent -replace "(export\s+default)", "router.use('/v1/multer', v1UploadRoutes);`n`n`$1"
+                $routerContent = $routerContent -replace "(export\s+default)", "router.use('/v1/multer', v1UploadRoutes);`r`n`r`n`$1"
             }
 
             Set-Content -Path $routerFilePath -Value $routerContent -NoNewline
-            Write-Host "-> Routes updated successfully (added at the end of imports and routes) in $routerFilePath" -ForegroundColor Gray
+            Write-Host "-> Routes updated successfully according to your layout in $routerFilePath" -ForegroundColor Gray
         } else {
             Write-Host "-> Upload routes already present in $routerFilePath" -ForegroundColor Yellow
         }
